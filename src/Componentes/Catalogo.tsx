@@ -15,8 +15,26 @@ const requestOptions = {
 
 function Linea(props: any) {
   // const [isEditable,setEditable] = useState(false)
+  console.log(props)
+
+  const deleteProduct: any = (id:number) => {
+
+  
+ 
+}
 
   let isEditable = false;
+   
+    let valores: Array<any> = []
+   // let valor: any 
+    props.col.forEach((element:string) => {
+      console.log(props.ele[element])
+      valores.push(
+      <th
+        scope="row"
+        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+      >{props.ele[element]}</th>)
+    })
   /*const editProducto: any = () => {
     fetch("http://localhost:3000/producto", {
       method: "POST",
@@ -36,19 +54,19 @@ function Linea(props: any) {
         scope="row"
         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
       >
-        {props.Id_Producto}
+         
       </th>
-      <td className="px-6 py-4">{props.Cantidad}</td>
-      <td className="px-6 py-4">{props.Precio}</td>
-      <td className="px-6 py-4">{props.Marca}</td>
-      <td className="px-6 py-4"> {props.Tipo} </td>
+  
+     
+      {valores}
+
       <button className="px-6 py-4" onClick={() => {}}>
         Editar
       </button>
       <button className="px-6 py-4" onClick={() => {}}>
         Seleccionar
       </button>
-      <button className="px-6 py-4" onClick={() => {}}>
+      <button className="px-6 py-4" onClick={() => {deleteProduct(props.Id_Producto)}}>
         Eliminar
       </button>
     </tr>
@@ -59,7 +77,9 @@ function Catalogo() {
   let listaDeProductos: Array<any> = [];
   const [products, setProducts] = useState({ productos: [], columnas: [] });
   const [lista, setLista] = useState({ tipos: [{ Nombre: "" }] });
+  
 
+ 
   const getTable: any = (arg: { nombre: string }) => {
     fetch(`http://localhost:3000/producto/${arg.nombre.toLowerCase()}`, {
       method: "GET",
@@ -67,7 +87,7 @@ function Catalogo() {
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
-       
+        //console.log(data)
       })
       .catch((err) => {
         console.log(err.message);
@@ -92,6 +112,7 @@ function Catalogo() {
     fetch("http://localhost:3000/producto", requestOptions)
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         setProducts(data);
       })
       .catch((err) => {
@@ -104,7 +125,7 @@ function Catalogo() {
   const productos: Array<any> = products.productos;
   let lineas: Array<any> = [];
   productos.forEach((element) => {
-    lineas.push(Linea(element));
+    lineas.push(Linea({ele:element, col: products.columnas}));
   });
   let columnas:  Array<any> = []
    
@@ -114,28 +135,34 @@ function Catalogo() {
   </th>)
   })
    const insertNewProducto: any  = ( ) => {
-     let entorno: Array<string> = ["Id Marca", "Precio", "Cantidad","Tipo", "Modelo", "Capacidad","Conexiones", "Id Generacion", "Velocidad",'Proveedor','Fecha','Compra' ]
+     let entorno: Array<string> = ["Marca", "Precio", "Cantidad","Tipo", "Modelo", "Capacidad","Conexiones", "Generacion", "Velocidad",'Proveedor','Compra' ]
      let valores: Array<string> = []
      let valor: any 
      entorno.forEach((element) => {
        valores.push((document.getElementById(element)! as HTMLInputElement).value)
      })
-     fetch("http://localhost:3000/producto", {
+   //  console.log(valores)
+     fetch("http://localhost:3000/producto/new", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
       body: JSON.stringify(
         {
+           
           "Id_Producto": "", //Vacio
-          "Cantidad": entorno[2] ,
-          "Precio": entorno[1],
-          "Id_Marca": entorno[0],
-          "Id_Tipo": entorno[3],
-          "Id_Modelo": entorno[4],
-          "Velocidad": entorno[8],
-          "Capacidad": entorno[5],
-          "Id_Generacion": entorno[7],
-          "Id_Proveedor": "",
-          "Fecha": "",
-          "Compra": "",
+          "Cantidad": valores[2] ,
+          "Precio": valores[1],
+          "Id_Marca": valores[0],
+          "Id_Tipo": valores[3],
+          "Id_Modelo": valores[4],
+          "Velocidad": valores[8],
+          "Capacidad": valores[5],
+          "Id_Generacion": valores[7],
+          "Id_Proveedor": valores[9],
+          "Fecha": new Date().toISOString().slice(0, 19).replace('T', ' '),         
+          "Compra": valores[10],
         }
       )
     })
@@ -152,7 +179,7 @@ function Catalogo() {
     <div className=" w-full h-full">
       <div className="m-4 flex flex-row">
       {listaDeProductos}  
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	ml-12" onClick={() => {}}>Añadir</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	ml-12" onClick={() => {insertNewProducto()}}>Añadir</button>
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	">Actualizar</button>
       </div>
 

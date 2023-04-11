@@ -45,11 +45,70 @@ function Linea2(props: any) {
       <button
         className="px-6 py-4"
         onClick={() => {
-          /* Eliminar cliente por id*/
+          fetch("http://localhost:3000/cliente/delete", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({
+              "Id_Cliente": props.Id_Cliente
+            })
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              // setProducts(data);
+            })
+            .catch((err) => {
+              console.log(err.message);
+            });
         }}
       >
         Eliminar
       </button>
+    </tr>
+  );
+}
+
+function Linea4(props: any) {
+  // const [isEditable,setEditable] = useState(false)
+
+  let isEditable = false;
+  const editProducto: any = () => {
+    fetch("http://localhost:3000/cliente", {
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        // setProducts(data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+  return (
+    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        scope="row"
+        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+      >
+        {props.NombreCombo}
+      </th>
+     
+      <th
+        scope="row"
+        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+      >
+        {props.Precio}
+      </th>
+      <th
+        scope="row"
+        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+      >
+        {props.Cantidad}
+      </th>
     </tr>
   );
 }
@@ -88,10 +147,45 @@ function Clientes() {
       </th>
     );
   });
+
+  const insertNewProducto: any  = ( ) => {
+    let entorno: Array<string> = ["Nombre", "Apellido", "Numero de telefono","Numero de Tarjeta" ]
+    let valores: Array<string> = []
+   // let valor: any 
+    entorno.forEach((element) => {
+      console.log(element)
+      valores.push((document.getElementById(element)! as HTMLInputElement).value)
+    })
+    fetch("http://localhost:3000/cliente/new", {
+     method: "POST",
+     headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+     body: JSON.stringify(
+       {
+         "Id": "", //Vacio
+         "Nombre": entorno[0] ,
+         "Apellido": entorno[1],
+         "Numero": entorno[2],
+         "NuTarjeta": entorno[3],
+        
+       }
+     )
+   })
+     .then((res) => res.json())
+     .then((data) => {
+       console.log(data);
+       // setProducts(data);
+     })
+     .catch((err) => {
+       console.log(err.message);
+     });
+    }
   return (
     <div className=" w-full h-full">
       <div className="m-4">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	">
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	" onClick={() => insertNewProducto()}>
           Añadir
         </button>
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	">
@@ -123,10 +217,9 @@ function Clientes() {
             {"Numero de Tarjeta"}
           </label>
           <input
-            type="email"
-            id="email"
+            type="text"
+            id="Tarjeta"
             className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-            placeholder="name@flowbite.com"
             required
           ></input>
         </div>
@@ -136,4 +229,4 @@ function Clientes() {
   );
 }
 
-export { Clientes, Linea2 };
+export { Clientes, Linea2 ,Linea4 };

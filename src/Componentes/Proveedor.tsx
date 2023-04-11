@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Linea3 } from "./Form";
 const requestOptions = {
   method: "GET",
   headers: {
@@ -57,14 +58,48 @@ function Proveedor() {
   let proveedores: Array<any> = [];
   let columnas: Array<any> = [];
   const [client, setClient] = useState({ proveedor: [], columnas: [] });
-
+  const insertNewProvider: any = () => {
+    let entorno: Array<string> = [
+      "Nombre-Proveedor",
+      "Apellido-Proveedor",
+      "Telefono-Proveedor",
+    ];
+    let valores: Array<string> = [];
+    let valor: any;
+    entorno.forEach((element) => {
+      valores.push(
+        (document.getElementById(element)! as HTMLInputElement).value
+      );
+    });
+    console.log(valores[1]);
+    fetch("http://localhost:3000/proveedor/new", {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json",
+         // 'Content-Type': 'application/x-www-form-urlencoded',
+       },
+      body: JSON.stringify({
+        Id: "", //Vacio
+        Nombre: valores[0],
+        Apellido: valores[1],
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        // setProducts(data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+  
   const getProveedor: any = () => {
     fetch("http://localhost:3000/proveedor", requestOptions)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setClient(data);
-        
       })
       .catch((err) => {
         console.log(err.message);
@@ -72,10 +107,10 @@ function Proveedor() {
   };
 
   useEffect(() => getProveedor(), []);
-  if( Array.isArray(client.proveedor) == true )
-  client.proveedor.forEach((element) => {
-    proveedores.push(Linea2(element));
-  });
+  if (Array.isArray(client.proveedor) == true)
+    client.proveedor.forEach((element) => {
+      proveedores.push(Linea2(element));
+    });
 
   client.columnas.forEach((element) => {
     columnas.push(
@@ -87,8 +122,15 @@ function Proveedor() {
   return (
     <div className=" w-full h-full">
       <div className="m-4">
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	">Añadir</button>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	">Actualizar</button>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end "
+          onClick={() => insertNewProvider()}
+        >
+          Añadir
+        </button>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-4 place-self-end	">
+          Actualizar
+        </button>
       </div>
 
       <div className="flex flex-col w-full	">
@@ -108,12 +150,20 @@ function Proveedor() {
           </div>
         </div>
       </div>
-      <div className="mt-6"></div>
+      <div className="mt-6">
+        <Linea3
+          array={[
+            "Nombre-Proveedor",
+            "Apellido-Proveedor",
+            "Telefono-Proveedor",
+          ]}
+        ></Linea3>
+      </div>
     </div>
   );
 }
 
-export {Proveedor,requestOptions};
+export { Proveedor, requestOptions };
 
 /*
 /*
